@@ -3,6 +3,7 @@ DiscordのBot。 https://discord.com/developers/でトークンを取得し、�
 クソコードです。
 
 
+
 できること
 
 ・/doidoidoコマンドで指定したチャンネルに毎週日曜日 19:00に月曜が近いことをお知らせしてくれます。
