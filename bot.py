@@ -43,12 +43,12 @@ async def on_ready():
     await bot.change_presence(activity=discord.CustomActivity(name="どぅいどぅいどぅ～"))
 
 # スラッシュコマンドの定義
-@bot.tree.command(name="doidoido", description="Set the channel for reminders")
+@bot.tree.command(name="doidoido", description="このコマンドを使用したチャンネルで月曜が近いことをお知らせします！")
 async def doidoido(interaction: discord.Interaction):
     global channel_id, reminder_task
     channel_id = interaction.channel.id
     save_channel_id()
-    await interaction.response.send_message('このチャンネルで月曜日をお知らせします！')
+    await interaction.response.send_message('このチャンネルで月曜日が近いことをお知らせします！')
     if reminder_task is None or reminder_task.done():
         reminder_task = bot.loop.create_task(send_reminder())
 
