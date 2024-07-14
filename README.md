@@ -1,4 +1,4 @@
-DiscordのBot。 https://discord.com/developers/でトークンを取得し、適当に貼り付けて cmdでPython bot.pyすればいい感じに動きます。
+DiscordのBot。 https://discord.com/developers/ でトークンを取得し、適当に貼り付けて cmdでPython bot.pyすればいい感じに動きます。
 
 クソコードです。
 
