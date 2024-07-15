@@ -91,6 +91,8 @@ async def send_reminder():
                 else:
                     await channel.send('月曜が近いです！')
                     await channel.send('https://video.twimg.com/ext_tw_video/1779366668697055233/pu/vid/avc1/1280x720/tIK_0IgHkJNaL5Qf.mp4')
+                #送信完了時次週まで待機
+                target_time += timedelta(days=7)
         await asyncio.sleep(3600)  #1時間ごとにチェック
 
 #返信処理
