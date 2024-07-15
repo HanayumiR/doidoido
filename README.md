@@ -11,3 +11,14 @@ DiscordのBot。 https://discord.com/developers/ でトークンを取得し、�
 ・「どぅいどぅいどぅ～」と「月曜が近いよ」に反応してくれます。
 
 なんかいい感じな機能あるいはコードを書いてくれる方がいたら適当にPull Requestsしてください。
+
+
+必須
+
+・Python
+
+・discord.py
+
+・requests
+
+全部最新版だと思う。適当です。なんか足りなかったらごめんね
