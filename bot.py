@@ -1,4 +1,4 @@
-#いろいろ取得したりするやつ
+#取得処理
 import discord
 from discord.ext import commands
 import asyncio
@@ -7,7 +7,13 @@ import json
 from datetime import datetime, timedelta
 import requests
 
-TOKEN = 'YOUR_DISCORD_TOKEN'
+# トークン読み込み関数
+def load_token():
+    with open('token.json', 'r') as file:
+        data = json.load(file)
+        return data['token']
+#ロード処理
+TOKEN = load_token()
 CHANNEL_ID_FILE = 'channel_id.json'
 HOLIDAYS_API_URL = 'https://holidays-jp.github.io/api/v1/date.json'
 
@@ -82,7 +88,6 @@ async def send_reminder():
                     target_time += timedelta(days=7)
                 delta = target_time - now
                 await asyncio.sleep(delta.total_seconds())
-                
                 #明日が祝日の場合
                 if is_holiday(target_time + timedelta(days=1)):
                     await channel.send('明日は祝日です！')
@@ -93,7 +98,8 @@ async def send_reminder():
                     await channel.send('https://video.twimg.com/ext_tw_video/1779366668697055233/pu/vid/avc1/1280x720/tIK_0IgHkJNaL5Qf.mp4')
                 #送信完了時次週まで待機
                 target_time += timedelta(days=7)
-        await asyncio.sleep(3600)  #1時間ごとにチェック
+        #1時間ごとにチェック
+        await asyncio.sleep(3600)  
 
 #返信処理
 @bot.event
