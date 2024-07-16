@@ -102,11 +102,11 @@ async def send_reminder():
                     #明日が祝日の場合
                     if is_holiday(target_time + timedelta(days=1)):
                         await channel.send('明日は祝日です！')
-                        await channel.send('https://video.twimg.com/ext_tw_video/1812141628598915072/pu/vid/avc1/1280x720/NWGNABfw5uo3fazF.mp4')
+                        await channel.send('https://video.twimg.com/ext_tw_video/1784235969786544128/pu/vid/avc1/1280x720/6oz_WapWCOm65c7g.mp4')
                         #祝日だった場合、翌日の月曜日にお知らせする
                         await asyncio.sleep(24 * 3600)
                         await channel.send('火曜日が近いです！')
-                        await channel.send('https://video.twimg.com/ext_tw_video/1812489402695712768/pu/vid/avc1/1280x720/VjdAwpZv5x4wClaY.mp4')
+                        await channel.send('https://video.twimg.com/ext_tw_video/1784882462671122432/pu/vid/avc1/1280x720/R3qitGqYlpd8dqmH.mp4')
                     #そうではない場合
                     else:
                         await channel.send('月曜が近いです！')
