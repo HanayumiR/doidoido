@@ -6,7 +6,6 @@ import os
 import json
 from datetime import datetime, timedelta
 import requests
-import time
 import sys
 
 #トークン読み込み関数
@@ -15,16 +14,16 @@ def load_token():
         data = json.load(file)
         return data['token']
 
-TOKEN = load_token()  #トークン読み込み
+TOKEN = load_token() 
+
+
+#宣言
 CHANNEL_ID_FILE = 'channel_id.json'
 HOLIDAYS_API_URL = 'https://holidays-jp.github.io/api/v1/date.json'
-
-#変数宣言
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='/', intents=intents)
-
-channel_ids = []  #複数のメッセージ送信チャンネルID用保存変数
+channel_ids = []  
 
 #チャンネルIDのセーブ&ロード
 def load_channel_ids():
@@ -42,9 +41,9 @@ def save_channel_ids():
     try:
         with open(CHANNEL_ID_FILE, 'w') as file:
             json.dump({'channel_ids': channel_ids}, file)
-            print(f'チャンネルID{channel_ids}が保存されました')
+            print(f'チャンネルID{channel_ids}が保存されました。')
     except Exception as e:
-        print(f'{e}によってチャンネルIDの保存に失敗しました')
+        print(f'{e}によってチャンネルIDの保存に失敗しました。')
 
 def get_holidays():
     response = requests.get(HOLIDAYS_API_URL)
@@ -58,38 +57,41 @@ holidays = get_holidays()
 def is_holiday(date):
     return date.strftime('%Y-%m-%d') in holidays
 
+#スラッシュコマンド定義
+async def add_commands():
+    @bot.tree.command(name="doidoido", description="このコマンドを使用したチャンネルで月曜が近いことをお知らせします！")
+    async def doidoido(interaction: discord.Interaction):
+        global channel_ids
+        channel_id = interaction.channel.id
+        if channel_id not in channel_ids:
+            channel_ids.append(channel_id)
+            save_channel_ids()
+        await interaction.response.send_message('このチャンネルで月曜日が近いことをお知らせします！')
+
+    @bot.tree.command(name="remove_doidoido", description="/doidoidoで指定したチャンネルへのお知らせを解除します！")
+    async def remove_doidoido(interaction: discord.Interaction):
+        global channel_ids
+        channel_id = interaction.channel.id
+        if channel_id in channel_ids:
+            channel_ids.remove(channel_id)
+            save_channel_ids()
+            await interaction.response.send_message('このチャンネルで月曜の通知をしないようにしますね。')
+        else:
+            await interaction.response.send_message('このチャンネルでお知らせするようにしていませんよ！')
+
+    await bot.tree.sync()
+    print('スラッシュコマンドが同期されましたよ。')
+
 @bot.event
 async def on_ready():
     print('ログインしました！')
-    await bot.tree.sync()
-    print('スラッシュコマンドが同期されました！')
+    await add_commands()  
     load_channel_ids()
     if channel_ids:
         print(f'チャンネル通知設定が読み込まれましたよ。: {channel_ids}')
         bot.loop.create_task(send_reminder())
     bot.loop.create_task(check_for_reload())
     await bot.change_presence(activity=discord.Game(name="どぅいどぅいどぅ～"))
-
-#スラッシュコマンド定義
-@bot.tree.command(name="doidoido", description="このコマンドを使用したチャンネルで月曜が近いことをお知らせします！")
-async def doidoido(interaction: discord.Interaction):
-    global channel_ids
-    channel_id = interaction.channel.id
-    if channel_id not in channel_ids:
-        channel_ids.append(channel_id)
-        save_channel_ids()
-    await interaction.response.send_message('このチャンネルで月曜日が近いことをお知らせしますね！')
-
-@bot.tree.command(name="remove_doidoido", description="このコマンドを使用したチャンネルでの月曜通知を解除します！")
-async def remove_doidoido(interaction: discord.Interaction):
-    global channel_ids
-    channel_id = interaction.channel.id
-    if channel_id in channel_ids:
-        channel_ids.remove(channel_id)
-        save_channel_ids()
-        await interaction.response.send_message('このチャンネルではもう月曜の通知をしませんね。')
-    else:
-        await interaction.response.send_message('このチャンネルはまだお知らせするようにしていませんよ！')
 
 #指定日時メッセージ送信関数
 async def send_reminder():
@@ -107,7 +109,7 @@ async def send_reminder():
                 if channel:
                     if is_holiday(target_time + timedelta(days=1)):
                         await channel.send('プロデューサーさん、明日は祝日ですよ！')
-                        print(f'#{channel_id}に明日が祝日だということをお知らせしました！')
+                        print(f'#{channel_id}に祝日をお知らせしました！')
                         await channel.send('https://video.twimg.com/ext_tw_video/1784235969786544128/pu/vid/avc1/1280x720/6oz_WapWCOm65c7g.mp4')
                         await asyncio.sleep(24 * 3600)
                         await channel.send('火曜日が近いです！')
