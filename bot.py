@@ -7,6 +7,7 @@ import json
 from datetime import datetime, timedelta
 import requests
 import time
+import sys
 
 #トークン読み込み関数
 def load_token():
@@ -23,7 +24,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='/', intents=intents)
 
-channel_ids = []  #メッセージ送信チャンネルID用保存変数
+channel_ids = []  #複数のメッセージ送信チャンネルID用保存変数
 
 #チャンネルIDのセーブ&ロード
 def load_channel_ids():
@@ -61,11 +62,12 @@ def is_holiday(date):
 async def on_ready():
     print('ログインしました！')
     await bot.tree.sync()
-    print('スラッシュコマンドが同期されました')
+    print('スラッシュコマンドが同期されました！')
     load_channel_ids()
     if channel_ids:
         print(f'チャンネル通知設定が読み込まれましたよ。: {channel_ids}')
         bot.loop.create_task(send_reminder())
+    bot.loop.create_task(check_for_reload())
     await bot.change_presence(activity=discord.Game(name="どぅいどぅいどぅ～"))
 
 #スラッシュコマンド定義
@@ -76,7 +78,18 @@ async def doidoido(interaction: discord.Interaction):
     if channel_id not in channel_ids:
         channel_ids.append(channel_id)
         save_channel_ids()
-    await interaction.response.send_message('このチャンネルで月曜日が近いことをお知らせします！')
+    await interaction.response.send_message('このチャンネルで月曜日が近いことをお知らせしますね！')
+
+@bot.tree.command(name="remove_doidoido", description="このコマンドを使用したチャンネルでの月曜通知を解除します！")
+async def remove_doidoido(interaction: discord.Interaction):
+    global channel_ids
+    channel_id = interaction.channel.id
+    if channel_id in channel_ids:
+        channel_ids.remove(channel_id)
+        save_channel_ids()
+        await interaction.response.send_message('このチャンネルではもう月曜の通知をしませんね。')
+    else:
+        await interaction.response.send_message('このチャンネルはまだお知らせするようにしていませんよ！')
 
 #指定日時メッセージ送信関数
 async def send_reminder():
@@ -84,7 +97,7 @@ async def send_reminder():
     while True:
         if channel_ids:
             now = datetime.now()
-            target_time = now.replace(hour=19, minute=0, second=0, microsecond=0)
+            target_time = now.replace(hour=2, minute=23, second=0, microsecond=0)
             if now.weekday() == 6 and now >= target_time:
                 target_time += timedelta(days=7)
             delta = (target_time - now).total_seconds()
@@ -93,17 +106,17 @@ async def send_reminder():
                 channel = bot.get_channel(channel_id)
                 if channel:
                     if is_holiday(target_time + timedelta(days=1)):
-                        bot.loop.create_task(channel.send('明日は祝日です！'))
+                        await channel.send('プロデューサーさん、明日は祝日ですよ！')
                         print(f'#{channel_id}に明日が祝日だということをお知らせしました！')
-                        bot.loop.create_task(channel.send('https://video.twimg.com/ext_tw_video/1784235969786544128/pu/vid/avc1/1280x720/6oz_WapWCOm65c7g.mp4'))
+                        await channel.send('https://video.twimg.com/ext_tw_video/1784235969786544128/pu/vid/avc1/1280x720/6oz_WapWCOm65c7g.mp4')
                         await asyncio.sleep(24 * 3600)
-                        bot.loop.create_task(channel.send('火曜日が近いです！'))
+                        await channel.send('火曜日が近いです！')
                         print(f'#{channel_id}に火曜が近いことをお知らせしました！')
-                        bot.loop.create_task(channel.send('https://video.twimg.com/ext_tw_video/1784882462671122432/pu/vid/avc1/1280x720/R3qitGqYlpd8dqmH.mp4'))
+                        await channel.send('https://video.twimg.com/ext_tw_video/1784882462671122432/pu/vid/avc1/1280x720/R3qitGqYlpd8dqmH.mp4')
                     else:
-                        bot.loop.create_task(channel.send('月曜が近いです！'))
+                        await channel.send('月曜が近いです！')
                         print(f'#{channel_id}に月曜が近いことをお知らせしました！')
-                        bot.loop.create_task(channel.send('https://video.twimg.com/ext_tw_video/1779366668697055233/pu/vid/avc1/1280x720/tIK_0IgHkJNaL5Qf.mp4'))
+                        await channel.send('https://video.twimg.com/ext_tw_video/1779366668697055233/pu/vid/avc1/1280x720/tIK_0IgHkJNaL5Qf.mp4')
             target_time += timedelta(days=7)
         await asyncio.sleep(7 * 24 * 3600)
 
@@ -118,6 +131,15 @@ async def on_message(message):
         print('どぅいどぅいどぅ～に反応しました！')  
     if message.content == '月曜が近いよ':
         await message.channel.send('https://youtu.be/XvE1VbeLqtg?si=LsL9MgPR4oZ5p4ap')
-        print('月曜が近いよに反応しました！') 
+        print('月曜が近いよに反応しました！')
+
+#リロード処理
+async def check_for_reload():
+    loop = asyncio.get_event_loop()
+    while True:
+        input_text = await loop.run_in_executor(None, input, "")
+        if input_text.lower() == "reload":
+            print("再起動中です...")
+            os.execv(sys.executable, ['python'] + sys.argv)
 
 bot.run(TOKEN)
