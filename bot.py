@@ -97,7 +97,7 @@ async def send_reminder():
     while True:
         if channel_ids:
             now = datetime.now()
-            target_time = now.replace(hour=2, minute=23, second=0, microsecond=0)
+            target_time = now.replace(hour=19, minute=0, second=0, microsecond=0)
             if now.weekday() == 6 and now >= target_time:
                 target_time += timedelta(days=7)
             delta = (target_time - now).total_seconds()
