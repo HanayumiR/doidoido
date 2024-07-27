@@ -6,6 +6,7 @@ import os
 import json
 from datetime import datetime, timedelta
 import requests
+import time
 
 #トークン読み込み関数
 def load_token():
@@ -22,7 +23,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='/', intents=intents)
 
-channel_ids = []  #複数のメッセージ送信チャンネルID用保存変数
+channel_ids = []  #メッセージ送信チャンネルID用保存変数
 
 #チャンネルIDのセーブ&ロード
 def load_channel_ids():
@@ -86,31 +87,37 @@ async def send_reminder():
             target_time = now.replace(hour=19, minute=0, second=0, microsecond=0)
             if now.weekday() == 6 and now >= target_time:
                 target_time += timedelta(days=7)
-            delta = target_time - now
-            await asyncio.sleep(delta.total_seconds())
+            delta = (target_time - now).total_seconds()
+            await asyncio.sleep(delta)
             for channel_id in channel_ids:
                 channel = bot.get_channel(channel_id)
                 if channel:
                     if is_holiday(target_time + timedelta(days=1)):
-                        await channel.send('明日は祝日です！')
-                        await channel.send('https://video.twimg.com/ext_tw_video/1784235969786544128/pu/vid/avc1/1280x720/6oz_WapWCOm65c7g.mp4')
+                        bot.loop.create_task(channel.send('明日は祝日です！'))
+                        print(f'#{channel_id}に明日が祝日だということをお知らせしました！')
+                        bot.loop.create_task(channel.send('https://video.twimg.com/ext_tw_video/1784235969786544128/pu/vid/avc1/1280x720/6oz_WapWCOm65c7g.mp4'))
                         await asyncio.sleep(24 * 3600)
-                        await channel.send('火曜日が近いです！')
-                        await channel.send('https://video.twimg.com/ext_tw_video/1784882462671122432/pu/vid/avc1/1280x720/R3qitGqYlpd8dqmH.mp4')
+                        bot.loop.create_task(channel.send('火曜日が近いです！'))
+                        print(f'#{channel_id}に火曜が近いことをお知らせしました！')
+                        bot.loop.create_task(channel.send('https://video.twimg.com/ext_tw_video/1784882462671122432/pu/vid/avc1/1280x720/R3qitGqYlpd8dqmH.mp4'))
                     else:
-                        await channel.send('月曜が近いです！')
-                        await channel.send('https://video.twimg.com/ext_tw_video/1779366668697055233/pu/vid/avc1/1280x720/tIK_0IgHkJNaL5Qf.mp4')
+                        bot.loop.create_task(channel.send('月曜が近いです！'))
+                        print(f'#{channel_id}に月曜が近いことをお知らせしました！')
+                        bot.loop.create_task(channel.send('https://video.twimg.com/ext_tw_video/1779366668697055233/pu/vid/avc1/1280x720/tIK_0IgHkJNaL5Qf.mp4'))
             target_time += timedelta(days=7)
-        await asyncio.sleep(3600)
+        await asyncio.sleep(7 * 24 * 3600)
 
 #返信処理
 @bot.event
 async def on_message(message):
     if message.author.bot:
         return
+    print(f' {message.content}') 
     if message.content == 'どぅいどぅいどぅ～':
         await message.channel.send('https://twitter.com/ChocodateMonday')
+        print('どぅいどぅいどぅ～に反応しました！')  
     if message.content == '月曜が近いよ':
         await message.channel.send('https://youtu.be/XvE1VbeLqtg?si=LsL9MgPR4oZ5p4ap')
+        print('月曜が近いよに反応しました！') 
 
 bot.run(TOKEN)
