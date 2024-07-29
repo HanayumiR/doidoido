@@ -108,15 +108,15 @@ async def send_reminder():
                 channel = bot.get_channel(channel_id)
                 if channel:
                     if is_holiday(target_time + timedelta(days=1)):
-                        await channel.send('プロデューサーさん、明日は祝日ですよ！')
+                        await channel.send('# プロデューサーさん、明日は祝日ですよ！')
                         print(f'#{channel_id}に祝日をお知らせしました！')
                         await channel.send('https://video.twimg.com/ext_tw_video/1784235969786544128/pu/vid/avc1/1280x720/6oz_WapWCOm65c7g.mp4')
                         await asyncio.sleep(24 * 3600)
-                        await channel.send('火曜日が近いです！')
+                        await channel.send('# 火曜日が近いです！')
                         print(f'#{channel_id}に火曜が近いことをお知らせしました！')
                         await channel.send('https://video.twimg.com/ext_tw_video/1784882462671122432/pu/vid/avc1/1280x720/R3qitGqYlpd8dqmH.mp4')
                     else:
-                        await channel.send('月曜が近いです！')
+                        await channel.send('# 月曜が近いです！')
                         print(f'#{channel_id}に月曜が近いことをお知らせしました！')
                         await channel.send('https://video.twimg.com/ext_tw_video/1779366668697055233/pu/vid/avc1/1280x720/tIK_0IgHkJNaL5Qf.mp4')
             target_time += timedelta(days=7)
