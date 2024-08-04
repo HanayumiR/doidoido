@@ -130,11 +130,13 @@ async def on_message(message):
     print(f' {message.content}') 
     if message.content == 'どぅいどぅいどぅ～':
         await message.channel.send('https://twitter.com/ChocodateMonday')
-        print('どぅいどぅいどぅ～に反応しました！')  
+        print('Twitterのリンクを送信しました！')  
     if message.content == '月曜が近いよ':
         await message.channel.send('https://youtu.be/XvE1VbeLqtg?si=LsL9MgPR4oZ5p4ap')
-        print('月曜が近いよに反応しました！')
-
+        print('YouTubeのリンクを送信しました！')
+    if message.content == '甘苦いサンデー':
+        await message.channel.send('https://nicovideo.jp/watch/sm43779730')
+        print('ニコニコ動画のリンクを送信しました！')
 #リロード処理
 async def check_for_reload():
     loop = asyncio.get_event_loop()
