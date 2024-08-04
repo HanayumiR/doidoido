@@ -75,7 +75,7 @@ async def add_commands():
         if channel_id in channel_ids:
             channel_ids.remove(channel_id)
             save_channel_ids()
-            await interaction.response.send_message('このチャンネルで月曜の通知をしないようにしますね。')
+            await interaction.response.send_message('このチャンネルでは月曜にお知らせしないようにしますね。')
         else:
             await interaction.response.send_message('このチャンネルでお知らせするようにしていませんよ！')
 
