@@ -104,17 +104,19 @@ async def on_ready():
 async def send_reminder():
     global channel_ids
     while True:
-        if channel_ids:
-            now = datetime.now()
-            target_time = now.replace(hour=19, minute=0, second=0, microsecond=0)
-            if now.weekday() == 6 and now >= target_time:
-                target_time += timedelta(days=7)
-            delta = (target_time - now).total_seconds()
-            await asyncio.sleep(delta)
+        now = datetime.now()
+        target_time = now.replace(hour=19, minute=0, second=0, microsecond=0)
+        if now.weekday() == 6 and now >= target_time:
+            target_time += timedelta(days=7)
+        delta = (target_time - now).total_seconds()
+        await asyncio.sleep(delta)
+
+        now = datetime.now()  # 再度現在時刻を取得
+        if now.weekday() == 6:  # 日曜日かどうかをチェック
             for channel_id in channel_ids:
                 channel = bot.get_channel(channel_id)
                 if channel:
-                    if is_holiday(target_time + timedelta(days=1)):
+                    if is_holiday(now + timedelta(days=1)):
                         await channel.send('# プロデューサーさん、明日は祝日ですよ！')
                         print(f'#{channel_id}に祝日をお知らせしました！')
                         await channel.send('https://video.twimg.com/ext_tw_video/1784235969786544128/pu/vid/avc1/1280x720/6oz_WapWCOm65c7g.mp4')
@@ -134,7 +136,7 @@ async def send_reminder():
 async def on_message(message):
     if message.author.bot:
         return
-    print(f' {message.content}') 
+    print(f'{message.content}') 
     if message.content == 'どぅいどぅいどぅ～':
         await message.channel.send('https://twitter.com/ChocodateMonday')
         print('Twitterのリンクを送信しました！')  
