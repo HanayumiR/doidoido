@@ -16,7 +16,6 @@ def load_token():
 
 TOKEN = load_token() 
 
-
 #宣言
 CHANNEL_ID_FILE = 'channel_id.json'
 HOLIDAYS_API_URL = 'https://holidays-jp.github.io/api/v1/date.json'
@@ -79,6 +78,14 @@ async def add_commands():
         else:
             await interaction.response.send_message('このチャンネルでお知らせするようにしていませんよ！')
 
+    @bot.tree.command(name="ping", description="反応するまでの時間を計測します！")
+    async def ping(interaction: discord.Interaction):
+        start_time = datetime.now()
+        await interaction.response.send_message('──お疲れ様ですっ！遅くなってすみません！')
+        end_time = datetime.now()
+        latency = (end_time - start_time).total_seconds() * 1000  # ミリ秒単位
+        await interaction.followup.send(f'応答時間: {latency:.2f} ms')
+
     await bot.tree.sync()
     print('スラッシュコマンドが同期されましたよ。')
 
@@ -137,6 +144,7 @@ async def on_message(message):
     if message.content == '甘苦いサンデー':
         await message.channel.send('https://nicovideo.jp/watch/sm43779730')
         print('ニコニコ動画のリンクを送信しました！')
+
 #リロード処理
 async def check_for_reload():
     loop = asyncio.get_event_loop()
