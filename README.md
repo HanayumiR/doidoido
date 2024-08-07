@@ -1,4 +1,5 @@
 ![image](https://github.com/user-attachments/assets/93afdec2-4b5f-49cf-9855-2068746954ef)
+
 DiscordのBot。 https://discord.com/developers/ でトークンを取得し、適当に貼り付けて cmdでPython bot.pyすればいい感じに動きます。
 
 クソコードです。
@@ -6,6 +7,7 @@ DiscordのBot。 https://discord.com/developers/ でトークンを取得し、�
 
 
 できること
+
 ![image](https://github.com/user-attachments/assets/dc7c0755-d2ba-4fa1-8749-dbfcc2ee98d2)
 
 
