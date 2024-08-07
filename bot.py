@@ -1,4 +1,13 @@
-#取得処理
+import discord
+from discord.ext import commands
+import asyncio
+import os
+import json
+from datetime import datetime, timedelta
+import requests
+import sys
+
+#トークン読み込み関数
 def load_token():
     with open('token.json', 'r') as file:
         data = json.load(file)
@@ -104,7 +113,7 @@ async def add_commands():
         else:
             await interaction.response.send_message('このチャンネルではお知らせするようにしていませんよ！')
 
-    @bot.tree.command(name="byebye_monday", description="このコマンドを使用したチャンネルで火曜日のお知らせを解除します！")
+    @bot.tree.command(name="byebye_monday", description="このコマンドを使用したチャンネルで月曜の終わりをお知らせします！")
     async def byebye_monday(interaction: discord.Interaction):
         global byebye_monday_channel_ids
         channel_id = interaction.channel.id
@@ -164,11 +173,11 @@ async def send_reminder():
                         await channel.send('https://video.twimg.com/ext_tw_video/1784235969786544128/pu/vid/avc1/1280x720/6oz_WapWCOm65c7g.mp4')
                         await asyncio.sleep(24 * 3600)
                         await channel.send('# **火曜日が近いです！**')
-                        print(f'#{channel_id}で火曜日の接近をお知らせしました！')
+                        print(f'#{channel_id}で火曜が近いことをお知らせしました！')
                         await channel.send('https://video.twimg.com/ext_tw_video/1784882462671122432/pu/vid/avc1/1280x720/R3qitGqYlpd8dqmH.mp4')
                     else:
-                        await channel.send('# **月曜日が近いです！**')
-                        print(f'#{channel_id}で月曜日の接近をお知らせしました！')
+                        await channel.send('# **月曜が近いです！**')
+                        print(f'#{channel_id}で月曜が近いことをお知らせしました！')
                         await channel.send('https://video.twimg.com/ext_tw_video/1779366668697055233/pu/vid/avc1/1280x720/tIK_0IgHkJNaL5Qf.mp4')
             target_time += timedelta(days=7)
         await asyncio.sleep(7 * 24 * 3600)
@@ -188,7 +197,7 @@ async def send_monday_message():
             for channel_id in let_us_go_monday_channel_ids:
                 channel = bot.get_channel(channel_id)
                 if channel:
-                    await channel.send('# **月曜日ですよ！**')
+                    await channel.send('# **プロデューサーさん、また新しい一週間が始まりましたよ！**')
                     print(f'#{channel_id}で月曜をお知らせしました！')
                     await channel.send('https://video.twimg.com/ext_tw_video/1820102073868046336/pu/vid/avc1/1280x720/N0N5xHgFr1cs5s3O.mp4')
             target_time += timedelta(days=7)
@@ -209,7 +218,7 @@ async def send_byebye_monday_message():
             for channel_id in byebye_monday_channel_ids:
                 channel = bot.get_channel(channel_id)
                 if channel:
-                    await channel.send('# **火曜です！**')
+                    await channel.send('# **月曜日が終わりましたよ～！**')
                     print(f'#{channel_id}で火曜日をお知らせしました！')
                     await channel.send('https://video.twimg.com/ext_tw_video/1800106395586752513/pu/vid/avc1/946x720/Q_EN_ps3Tj7qsElz.mp4')
             target_time += timedelta(days=7)
